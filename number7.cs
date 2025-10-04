@@ -4,74 +4,60 @@ class Program
 {
     static void Main()
     {
-        Console.Write("Введите количество модулей (n): ");
+        Console.Write("Введите количество модулей n: ");
         int n = int.Parse(Console.ReadLine());
-
-        Console.Write("Введите размеры модуля (a b): ");
-        string[] input = Console.ReadLine().Split();
-        int a = int.Parse(input[0]);
-        int b = int.Parse(input[1]);
-
-        Console.Write("Введите размеры поля (w h): ");
-        input = Console.ReadLine().Split();
-        int w = int.Parse(input[0]);
-        int h = int.Parse(input[1]);
-
-        int maxD = CalculateMaxProtection(n, a, b, w, h);
         
-        if (maxD == -1)
+        Console.Write("Введите ширину модуля a: ");
+        int a = int.Parse(Console.ReadLine());
+        
+        Console.Write("Введите высоту модуля b: ");
+        int b = int.Parse(Console.ReadLine());
+        
+        Console.Write("Введите ширину поля w: ");
+        int w = int.Parse(Console.ReadLine());
+        
+        Console.Write("Введите высоту поля h: ");
+        int h = int.Parse(Console.ReadLine());
+        
+        int maxD = 0;
+        
+        Console.WriteLine("\nРасчет возможных вариантов:");
+        Console.WriteLine($"Количество модулей: {n}");
+        Console.WriteLine($"Размер модуля: {a} x {b} м");
+        Console.WriteLine($"Размер поля: {w} x {h} м");
+        Console.WriteLine(new string('-', 40));
+        
+        // Перебираем возможные значения d
+        for (int d = 0; d <= Math.Min(w, h); d++)
         {
-            Console.WriteLine("Размещение невозможно");
-        }
-        else
-        {
-            Console.WriteLine($"Максимальная толщина защиты: {maxD}");
-        }
-    }
-
-    static int CalculateMaxProtection(int n, int a, int b, int w, int h)
-    {
-        // Проверяем возможность размещения без защиты
-        if (!CanPlaceModules(n, a, b, w, h, 0))
-            return -1;
-
-        // Бинарный поиск максимальной толщины
-        int left = 0;
-        int right = Math.Min(w, h);
-        int result = 0;
-
-        while (left <= right)
-        {
-            int mid = (left + right) / 2;
-            if (CanPlaceModules(n, a, b, w, h, mid))
+            // Размер модуля с защитой
+            int moduleWidth = a + 2 * d;
+            int moduleHeight = b + 2 * d;
+            
+            // Сколько модулей помещается по горизонтали и вертикали
+            int horizontal = w / moduleWidth;
+            int vertical = h / moduleHeight;
+            int totalModules = horizontal * vertical;
+            
+            Console.WriteLine($"d = {d}: модуль {moduleWidth} x {moduleHeight}, " +
+                            $"размещение {horizontal} x {vertical} = {totalModules} модулей");
+            
+            if (totalModules >= n)
             {
-                result = mid;
-                left = mid + 1;
+                maxD = d;
+                Console.WriteLine($"Подходит! (нужно {n}, доступно {totalModules})");
             }
             else
             {
-                right = mid - 1;
+                Console.WriteLine($"Не подходит (нужно {n}, доступно {totalModules})");
+                break;
             }
         }
-        return result;
-    }
-
-    static bool CanPlaceModules(int n, int a, int b, int w, int h, int d)
-    {
-        // Размеры модуля с защитой
-        int aWithD = a + 2 * d;
-        int bWithD = b + 2 * d;
-
-        // Проверяем оба варианта ориентации
-        return (w >= aWithD && h >= bWithD && CanFit(n, aWithD, bWithD, w, h)) ||
-               (w >= bWithD && h >= aWithD && CanFit(n, bWithD, aWithD, w, h));
-    }
-
-    static bool CanFit(int n, int moduleWidth, int moduleHeight, int fieldWidth, int fieldHeight)
-    {
-        int maxInRow = fieldWidth / moduleWidth;
-        int maxInColumn = fieldHeight / moduleHeight;
         
-        return maxInRow * maxInColumn >= n;
+        Console.WriteLine(new string('=', 50));
+        Console.WriteLine("РЕЗУЛЬТАТ:");
+        Console.WriteLine($"Максимальная толщина защиты: d = {maxD} м");
+        Console.WriteLine($"Размер модуля с защитой: {a + 2 * maxD} x {b + 2 * maxD} м");
+        Console.WriteLine($"Максимальное количество модулей: {(w / (a + 2 * maxD)) * (h / (b + 2 * maxD))}");
     }
 }
