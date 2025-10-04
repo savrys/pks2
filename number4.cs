@@ -4,30 +4,30 @@ class Program
 {
     static void Main()
     {
-        Console.WriteLine("Загадайте число от 0 до 63. Я попробую его угадать.");
-        Console.WriteLine("Отвечайте '1' (да) или '0' (нет) на мои вопросы.");
-
-        int lower = 0;
-        int upper = 63;
-        int result = 0;
-
-        for (int i = 5; i >= 0; i--)
+        int low = 0;
+        int high = 63;
+        int questions = 0;
+        
+        Console.WriteLine("Загадайте число от 0 до 63. Отвечайте: 1 - да, 0 - нет");
+        Console.WriteLine("------------------------------------------------------");
+        
+        for (int i = 0; i < 7; i++)
         {
-            int mid = lower + (1 << i); // 2^i
-            Console.Write($"Ваше число больше или равно {mid}? (1/0): ");
+            int mid = (low + high) / 2;
+            Console.Write($"Вопрос {i + 1}: Ваше число больше {mid}? ");
             int answer = int.Parse(Console.ReadLine());
-
+            questions++;
+            
             if (answer == 1)
-            {
-                result |= (1 << i); // Устанавливаем бит
-                lower = mid;
-            }
+                low = mid + 1;
             else
-            {
-                upper = mid - 1;
-            }
+                high = mid;
+            
+            Console.WriteLine($"Диапазон поиска: [{low}, {high}]");
         }
-
-        Console.WriteLine($"Ваше число: {result}");
+        
+        Console.WriteLine("======================================");
+        Console.WriteLine($"Загаданное число: {low}");
+        Console.WriteLine($"Угадано за {questions} вопросов");
     }
 }
