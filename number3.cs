@@ -2,48 +2,7 @@ using System;
 
 class Program
 {
-    static void Main()
-    {
-        // Ввод чисел
-        Console.Write("Введите числитель M: ");
-        int m = int.Parse(Console.ReadLine());
-
-        Console.Write("Введите знаменатель N: ");
-        int n = int.Parse(Console.ReadLine());
-
-        if (n == 0)
-        {
-            Console.WriteLine("Ошибка: знаменатель не может быть равен 0");
-            return;
-        }
-
-        // Находим НОД
-        int gcd = FindGCD(Math.Abs(m), Math.Abs(n));
-
-        // Сокращаем дробь
-        int numerator = m / gcd;
-        int denominator = n / gcd;
-
-        // Корректируем знаки
-        if (denominator < 0)
-        {
-            numerator = -numerator;
-            denominator = -denominator;
-        }
-
-        // Выводим результат
-        if (denominator == 1)
-        {
-            Console.WriteLine($"Несократимая дробь: {numerator}");
-        }
-        else
-        {
-            Console.WriteLine($"Несократимая дробь: {numerator}/{denominator}");
-        }
-    }
-
-    // Метод для нахождения НОД (алгоритм Евклида)
-    static int FindGCD(int a, int b)
+    static int GCD(int a, int b)
     {
         while (b != 0)
         {
@@ -51,6 +10,40 @@ class Program
             b = a % b;
             a = temp;
         }
-        return a;
+        return Math.Abs(a);
+    }
+    
+    static void Main()
+    {
+        Console.Write("Введите числитель: ");
+        int numerator = int.Parse(Console.ReadLine());
+        
+        Console.Write("Введите знаменатель: ");
+        int denominator = int.Parse(Console.ReadLine());
+        
+        if (denominator == 0)
+        {
+            Console.WriteLine("Ошибка: знаменатель не может быть равен 0");
+            return;
+        }
+        
+        Console.WriteLine($"Исходная дробь: {numerator} / {denominator}");
+        
+        // Находим НОД
+        int gcd = GCD(numerator, denominator);
+        Console.WriteLine($"Наибольший общий делитель: {gcd}");
+        
+        // Сокращаем дробь
+        int reducedNum = numerator / gcd;
+        int reducedDen = denominator / gcd;
+        
+        // Убираем двойной минус
+        if (reducedDen < 0)
+        {
+            reducedNum = -reducedNum;
+            reducedDen = -reducedDen;
+        }
+        
+        Console.WriteLine($"Сокращенная дробь: {reducedNum} / {reducedDen}");
     }
 }
