@@ -1,115 +1,83 @@
 using System;
 
-class CoffeeMachine
+class Program
 {
-    private const int AMERICANO_WATER = 300;
-    private const int LATTE_WATER = 30;
-    private const int LATTE_MILK = 270;
-    private const int AMERICANO_PRICE = 150;
-    private const int LATTE_PRICE = 170;
-
-    private int water;
-    private int milk;
-    private int americanoCount = 0;
-    private int latteCount = 0;
-    private int totalEarnings = 0;
-
-    public void Start()
-    {
-        Console.Write("Введите количество воды (мл): ");
-        water = int.Parse(Console.ReadLine());
-
-        Console.Write("Введите количество молока (мл): ");
-        milk = int.Parse(Console.ReadLine());
-
-        while (true)
-        {
-            if (!CanMakeAnyDrink())
-            {
-                ShowReport();
-                break;
-            }
-
-            ProcessOrder();
-        }
-    }
-
-    private void ProcessOrder()
-    {
-        Console.WriteLine("\nВыберите напиток:");
-        Console.WriteLine("1 - Американо");
-        Console.WriteLine("2 - Латте");
-
-        int choice = int.Parse(Console.ReadLine());
-
-        switch (choice)
-        {
-            case 1:
-                MakeAmericano();
-                break;
-            case 2:
-                MakeLatte();
-                break;
-            default:
-                Console.WriteLine("Неверный выбор");
-                break;
-        }
-    }
-
-    private void MakeAmericano()
-    {
-        if (water >= AMERICANO_WATER)
-        {
-            water -= AMERICANO_WATER;
-            americanoCount++;
-            totalEarnings += AMERICANO_PRICE;
-            Console.WriteLine("Ваш напиток готов");
-        }
-        else
-        {
-            Console.WriteLine("Не хватает воды");
-        }
-    }
-
-    private void MakeLatte()
-    {
-        if (water >= LATTE_WATER && milk >= LATTE_MILK)
-        {
-            water -= LATTE_WATER;
-            milk -= LATTE_MILK;
-            latteCount++;
-            totalEarnings += LATTE_PRICE;
-            Console.WriteLine("Ваш напиток готов");
-        }
-        else if (water < LATTE_WATER)
-        {
-            Console.WriteLine("Не хватает воды");
-        }
-        else
-        {
-            Console.WriteLine("Не хватает молока");
-        }
-    }
-
-    private bool CanMakeAnyDrink()
-    {
-        return (water >= AMERICANO_WATER) || (water >= LATTE_WATER && milk >= LATTE_MILK);
-    }
-
-    private void ShowReport()
-    {
-        Console.WriteLine("\n*Отчёт*");
-        Console.WriteLine("Ингредиенты подошли к концу");
-        Console.WriteLine($"Остаток воды: {water} мл");
-        Console.WriteLine($"Остаток молока: {milk} мл");
-        Console.WriteLine($"Кружек американо приготовлено: {americanoCount}");
-        Console.WriteLine($"Кружек латте приготовлено: {latteCount}");
-        Console.WriteLine($"Итого: {totalEarnings} рублей");
-    }
-
     static void Main()
     {
-        CoffeeMachine machine = new CoffeeMachine();
-        machine.Start();
+        Console.Write("Введите количество воды в мл: ");
+        int water = int.Parse(Console.ReadLine());
+        
+        Console.Write("Введите количество молока в мл: ");
+        int milk = int.Parse(Console.ReadLine());
+        
+        int americanoCount = 0;
+        int latteCount = 0;
+        int earnings = 0;
+        int customers = 0;
+        
+        Console.WriteLine("\nНачало работы кофейного аппарата...");
+        
+        while (true)
+        {
+            customers++;
+            Console.WriteLine($"\n--- Обслуживание клиента {customers} ---");
+            Console.Write("Выберите напиток (1 — американо, 2 — латте): ");
+            int choice = int.Parse(Console.ReadLine());
+            
+            if (choice == 1) // Американо
+            {
+                if (water >= 300)
+                {
+                    water -= 300;
+                    americanoCount++;
+                    earnings += 150;
+                    Console.WriteLine("Ваш американо готов!");
+                }
+                else
+                {
+                    Console.WriteLine("Не хватает воды для приготовления американо");
+                }
+            }
+            else if (choice == 2) // Латте
+            {
+                if (water >= 30 && milk >= 270)
+                {
+                    water -= 30;
+                    milk -= 270;
+                    latteCount++;
+                    earnings += 170;
+                    Console.WriteLine("Ваш латте готов!");
+                }
+                else if (water < 30)
+                {
+                    Console.WriteLine("Не хватает воды для приготовления латте");
+                }
+                else
+                {
+                    Console.WriteLine("Не хватает молока для приготовления латте");
+                }
+            }
+            
+            // Проверка, можно ли приготовить еще хотя бы один напиток
+            bool canMakeAmericano = water >= 300;
+            bool canMakeLatte = water >= 30 && milk >= 270;
+            
+            if (!canMakeAmericano && !canMakeLatte)
+            {
+                Console.WriteLine("\n" + new string('=', 50));
+                Console.WriteLine("🏁 ИНГРЕДИЕНТЫ ЗАКОНЧИЛИСЬ - ФОРМИРОВАНИЕ ОТЧЕТА");
+                Console.WriteLine(new string('=', 50));
+                Console.WriteLine($"Остаток воды: {water} мл");
+                Console.WriteLine($"Остаток молока: {milk} мл");
+                Console.WriteLine($"Обслужено клиентов: {customers}");
+                Console.WriteLine($"Приготовлено американо: {americanoCount} шт.");
+                Console.WriteLine($"Приготовлено латте: {latteCount} шт.");
+                Console.WriteLine($"Общая выручка: {earnings} рублей");
+                Console.WriteLine(new string('=', 50));
+                break;
+            }
+            
+            Console.WriteLine($"Текущий остаток - Вода: {water} мл, Молоко: {milk} мл");
+        }
     }
 }
